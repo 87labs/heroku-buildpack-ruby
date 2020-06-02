@@ -103,11 +103,10 @@ WARNING
       allow_git do
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
-        build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development:test")
+        build_bundler(bundle_path: "vendor/bundle")
         post_bundler
         create_database_yml
         install_binaries
-        run_assets_precompile_rake_task
       end
       config_detect
       best_practice_warnings
@@ -791,12 +790,11 @@ BUNDLE
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(bundle_path:, default_bundle_without:)
+  def build_bundler(bundle_path:)
     instrument 'ruby.build_bundler' do
       log("bundle") do
-        bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
-        bundle_command = "#{bundle_bin} install --without #{bundle_without} --path #{bundle_path} --binstubs #{bundler_binstubs_path}"
+        bundle_command = "#{bundle_bin} install --path #{bundle_path} --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
 
         if File.exist?("#{Dir.pwd}/.bundle/config")
